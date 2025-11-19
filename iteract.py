@@ -40,9 +40,10 @@ def apply_business_rules(data_list: list) -> dict:
                 'product_name': record.get('Nome Produto'),
                 'product_category': record.get('FAMILIA'),
                 'product_quantity': record.get('Qtde'),
-                'product_price': format_price(record.get(' PREÇO ')),
+                'product_price': product_price(format_price(record.get(' PREÇO ')), record.get('Nome Produto')),
                 'weight': float(record.get('Peso Líquido Estimado')),
-                'final_price': float(record.get('Total'))
+                'final_price': float(record.get('Total')),
+                'jbs_id': record.get('Produto')
             }
             
             consumer_orders[order_code]['products'].append(product_info)
@@ -56,12 +57,13 @@ def apply_business_rules(data_list: list) -> dict:
         
         
         except Exception as e:
-            print(f"Error processing record {record}: {e}")
+            #print(f"Error processing record {record}: {e}")
             pass
 
     # --- END OF YOUR BUSINESS LOGIC ---
     
     return consumers_dict
+
 
 
 def format_price(price_str):
@@ -81,3 +83,27 @@ def format_date(date_str):
         return new_date
     except ValueError:
         return "0000-00-00"
+    
+
+def product_price(box_price, item_str):
+    print("Iteasdasdam str")
+    print(item_str)
+    print(box_price)
+    if "X" not in item_str:
+        value = 12
+    else:
+        try:
+            part_before_x = item_str.split('X')[0]
+            print(part_before_x)
+            x = float(part_before_x.split(' ')[-1])
+            print(x)
+            print()
+            value = round(float(box_price/x), 3)
+            print(value)
+            
+        
+        except ValueError:
+            value = 12
+        
+    print(value)
+    return float(value)
